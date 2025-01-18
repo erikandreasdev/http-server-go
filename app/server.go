@@ -2,26 +2,25 @@ package main
 
 import (
 	"fmt"
-	"net"
-	"os"
+	"log"
+	"net/http"
 )
 
-var _ = net.Listen
-var _ = os.Exit
-
 func main() {
-	// You can use print statements as follows for debugging, they'll be visible when running tests.
+	// Debugging print message
 	fmt.Println("Logs from your program will appear here!")
 
-	l, err := net.Listen("tcp", "0.0.0.0:4221")
-	if err != nil {
-		fmt.Println("Failed to bind to port 4221")
-		os.Exit(1)
-	}
+	// Setting up the HTTP handler
+	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		// Write HTTP response body
+		w.WriteHeader(http.StatusOK) // Set status code as 200 OK (optional because it's the default)
+		_, _ = w.Write([]byte("Hello, world!"))
+	})
 
-	_, err = l.Accept()
+	// Start the HTTP server
+	log.Println("Starting server on port 4221...")
+	err := http.ListenAndServe(":4221", nil)
 	if err != nil {
-		fmt.Println("Error accepting connection: ", err.Error())
-		os.Exit(1)
+		log.Fatal("Error starting server: ", err)
 	}
 }
